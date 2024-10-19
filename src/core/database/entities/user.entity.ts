@@ -1,33 +1,25 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Schema, model } from 'mongoose';
 
-@Table
-export class User extends Model<User> {
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  name: string;
-
-  @Column({
-    type: DataType.STRING,
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
     unique: true,
-    allowNull: false,
-    validate: {
-      isEmail: true, // Validate that the value is an email address
-    },
-  })
-  email: string;
+    required: true,
+    match: [/.+@.+\..+/, 'Please enter a valid email address'], // Email validation
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female'],
+    required: true,
+  },
+});
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  password: string;
-
-  @Column({
-    type: DataType.ENUM,
-    values: ['male', 'female'],
-    allowNull: false,
-  })
-  gender: string;
-}
+export const UserModel = model('User', userSchema);

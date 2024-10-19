@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import {Injectable, UnauthorizedException} from '@nestjs/common';
+import {UsersService} from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
-import { UserDto } from '../users/dto/user.dto';
+import {JwtService} from '@nestjs/jwt';
+import {LoginDto} from './dto/login.dto';
+import {UserDto} from '../users/dto/user.dto';
+import {TokenDto} from "./dto/token.dto";
 
 @Injectable()
 export class AuthService {
@@ -22,43 +23,41 @@ export class AuthService {
     // find if user password match
     const match = await this.comparePassword(pass, user.password);
     if (!match) {
-      return null;
+      throw new Error('Wrong credentials');
     }
 
-    const { ...result } = user['dataValues'];
-    return result;
+    return user;
   }
 
   public async login(user: LoginDto) {
-    const token = await this.generateToken(user);
+    const token_details = await this.userService.findOneByEmail(user.email);
+    if (!token_details) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const { email, _id} = token_details;
+    const token = await this.generateToken({email, _id});
     return { token };
   }
 
-  public async create(user: UserDto) {
+  public async create(user: UserDto): Promise<{token: string}> {
     // hash the password
     const pass = await this.hashPassword(user.password);
 
     // create the user
     const newUser = await this.userService.create({ ...user, password: pass });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...result } = newUser['dataValues'];
-
+    const { email, _id,  } = newUser;
     // generate token
-    const token = await this.generateToken(result);
-
-    // return the user and the token
-    return { user: result, token };
+    const token = await this.generateToken({email, _id});
+   return {token};
   }
 
-  private async generateToken(user) {
-    const token = await this.jwtService.signAsync(user);
-    return token;
+  private async generateToken(user : TokenDto) {
+    return await this.jwtService.signAsync(user);
   }
 
   private async hashPassword(password) {
-    const hash = await bcrypt.hash(password, 10);
-    return hash;
+    return await bcrypt.hash(password, 10);
   }
 
   private async comparePassword(enteredPassword, dbPassword) {
