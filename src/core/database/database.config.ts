@@ -3,7 +3,7 @@ import { type IDatabaseConfig } from './interface/dbConfig.interface';
 
 dotenv.config()
 
-export const databaseConfig: IDatabaseConfig = {
+export const databaseConfig = {
   development: {
     uri: process.env.MONGO_URI_DEVELOPMENT ?? ''
   },
@@ -11,6 +11,6 @@ export const databaseConfig: IDatabaseConfig = {
     uri: process.env.MONGO_URI_TEST ?? ''
   },
   production: {
-    uri: process.env.MONGO_URI_PRODUCTION ?? ''
-  }
-}
+    uri: process.env.MONGO_URL ?? ''
+  },
+};

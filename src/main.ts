@@ -9,14 +9,21 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidateInputPipe());
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Doc')
-    .setDescription('API Requests Description')
-    .setVersion('1.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
-      'Bearer Token',
-    )
-    .build();
+      .setTitle('Doc')
+      .setDescription('API Requests')
+      .setVersion('1.0')
+      .addBearerAuth(
+          {
+            description: `Please enter token in following format:  <JWT>`,
+            name: 'Authorization',
+            bearerFormat: 'Bearer',
+            scheme: 'Bearer',
+            type: 'http',
+            in: 'Header'
+          })
+      .build();
+
+
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/documentation', app, document);

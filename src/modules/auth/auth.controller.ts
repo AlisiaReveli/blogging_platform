@@ -12,7 +12,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { UserDto } from '../users/dto/user.dto'
 import { DoesUserExist } from '../../core/guards/doesUserExist.guard'
 import { CurrentUser } from '../../core/decorators/currentUser.decorator'
-import { ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger'
+import {ApiResponse, ApiTags, ApiBody, ApiBearerAuth} from '@nestjs/swagger'
 import { LoginDto } from './dto/login.dto'
 @ApiTags('Auth')
 @Controller('auth')
@@ -37,6 +37,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')
+  @ApiBearerAuth()
   async getMe (@CurrentUser() user: User, @Res() res) {
     if (user) {
       return res.status(200).json({
