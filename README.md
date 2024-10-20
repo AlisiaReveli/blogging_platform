@@ -3,10 +3,8 @@
 ## Getting Started
 Prerequisites
 Before you begin, ensure you have met the following requirements:
-
-1. ``npm install``
+1. Clone repo  `` https://github.com/AlisiaReveli/blogging_platform.git  ``
 2. Create a .env file in the root directory, like the example below
-
 
 ```plaintext
 JWTKEY=your_jwt_key
@@ -18,10 +16,14 @@ MONGO_URI_TEST='mongodb://localhost:27017/my_local_db'
 MONGO_URL='mongodb://mongo:27017/production_db'
 NODE_ENV=DEVELOPMENT
 ````
-### Starting the Project
-To start the project, use one of the following commands:
 
-3. ````nest start````
+
+3. Run ``npm install``
+
+
+
+### Starting the Project
+4. ````nest start````
 
 
 ### Accessing Documentation
