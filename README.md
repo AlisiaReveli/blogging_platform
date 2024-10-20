@@ -34,3 +34,13 @@ http://localhost:3000/api/documentation
 ````
 
 
+### Run tests with command
+
+
+````
+npm run test
+````
+If you want to run specific modules like posts eg: 
+````
+npm run test posts 
+````
