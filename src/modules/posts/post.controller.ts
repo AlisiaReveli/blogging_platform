@@ -13,14 +13,16 @@ import {CurrentUser} from "../../core/decorators/currentUser.decorator";
 import {User} from "../users/types/user.types";
 import {CreatePostResponse, PaginatedPostsResponse, SearchResponse} from "./types/post.types";
 import {UpdatePostDto} from "./dto/updatePost.dto";
+import {Public} from "../../core/decorators/isPublic.decorator";
+import {PublicGuard} from "../../core/guards/isPublic.guard";
 @ApiTags('Post')
 @Controller('post')
 @ApiBearerAuth()
+@UseGuards(PublicGuard)
 export class PostController {
     constructor (private readonly postService: PostService) {}
 
     @Post()
-    @UseGuards(AuthGuard('jwt'))
     @ApiBody({
         type: CreatePostDto,
     })
@@ -33,7 +35,6 @@ export class PostController {
     }
 
     @Get('search')
-    @UseGuards(AuthGuard('jwt'))
     @ApiQuery({ name: 'query', required: true, type: String, description: 'Search query' })
     @ApiResponse({ status: 200, description: 'Returns matching posts' })
     async search(@Query('query') query: string): Promise<SearchResponse> {
@@ -42,7 +43,7 @@ export class PostController {
     }
 
     @Get()
-    @UseGuards(AuthGuard('jwt'))
+    // @Public()
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number for pagination' })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of posts per page' })
     @ApiQuery({ name: 'sort', required: false, type: String, enum: ['date', 'title'], description: 'Sort by creation date or title' })
@@ -60,7 +61,6 @@ export class PostController {
 
 
     @Get(':id')
-    @UseGuards(AuthGuard('jwt'))
     @ApiParam({ name: 'id', type: 'string' })
     @ApiResponse({ status: 200, description: 'Returns a single post' })
     @ApiResponse({ status: 404, description: 'Post not found' })
@@ -75,7 +75,6 @@ export class PostController {
     }
 
     @Patch(':id')
-    @UseGuards(AuthGuard('jwt'))
     @ApiParam({ name: 'id', type: 'string' })
     @ApiBody({ type: UpdatePostDto })
     @ApiResponse({ status: 200, description: 'Post updated successfully' })
@@ -94,7 +93,6 @@ export class PostController {
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard('jwt'))
     @ApiParam({ name: 'id', type: 'string' })
     @ApiResponse({ status: 200, description: 'Post deleted successfully' })
     @ApiResponse({ status: 404, description: 'Post not found' })
